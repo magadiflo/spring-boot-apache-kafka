@@ -94,3 +94,12 @@ asignado el offset, nunca se cambiará. El primer mensaje recibe un offset cero 
 offset uno (1), y así sucesivamente.
 
 ![09.offsets.png](assets/09.offsets.png)
+
+## Consumer Groups
+
+Un grupo de consumidores es una agrupación lógica de consumidores de Kafka que trabajan juntos para consumir y procesar
+mensajes de una o más particiones de un topic. Para que cada partición de un topic pueda asignarse como máximo a un
+consumidor dentro de un grupo de consumidores. Como puede ver, esto garantiza que cada mensaje dentro de una partición
+sea procesada solo por un consumer a la vez.
+
+![11.consumer_groups.png](assets/11.consumer_groups.png)
