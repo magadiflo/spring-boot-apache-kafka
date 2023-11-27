@@ -65,3 +65,10 @@ eventos. Pueden ser parte de un grupo de consumidores que les permite paraleliza
 
 ![06.kafka_consumer.png](assets/06.kafka_consumer.png)
 
+## Kafka Topic
+
+Un `kafka topic` es un canal lógico o una categoría de alimentación en la que los productores publican registros 
+(mensajes) y los consumidores consumen registros. Los `topics` sirven para organizar y categorizar el flujo de mensajes
+dentro del sistema de mensajería kafka.
+
+![07.kafka_topic.png](assets/07.kafka_topic.png)
