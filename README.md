@@ -86,3 +86,11 @@ puedan leer desde diferentes particiones simultáneamente, lo que le permite a K
 al distribuir la carga de trabajo entre múltiples particiones.
 
 ![08.kafka_partitions.png](assets/08.kafka_partitions.png)
+
+## Offsets
+
+Offsets es una secuencia de identificadores que se asignan a los mensajes a medida que llegan a una partición. Una vez
+asignado el offset, nunca se cambiará. El primer mensaje recibe un offset cero (0). El siguiente mensaje recibe un
+offset uno (1), y así sucesivamente.
+
+![09.offsets.png](assets/09.offsets.png)
