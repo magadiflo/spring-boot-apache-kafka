@@ -50,3 +50,10 @@ los metadatos del clúster y a cada broker en un clúster de kafka se le asigna 
 
 ![04.kafka_broker.png](assets/04.kafka_broker.png)
 
+## Kafka Producer
+
+El `Producer` es una aplicación cliente que publica o escribe eventos en un clúster de Kafka, por lo que el producer
+puede ser una aplicación java, php, .net o cualquier otro tipo de aplicación, incluso una línea de comandos y
+simplemente escribe o envía un evento a un clúster de Kafka.
+
+![05.kafka_producer.png](assets/05.kafka_producer.png)
