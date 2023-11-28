@@ -192,3 +192,35 @@ $ .\bin\windows\kafka-server-start.bat .\config\server.properties
 [2023-11-27 20:08:56,068] INFO Kafka commitId: 60e845626d8a465a (org.apache.kafka.common.utils.AppInfoParser)
 ...
 ````
+
+## Explorando Kafka
+
+Kafka es una plataforma distribuida de transmisión de eventos que le permite leer, escribir, almacenar y procesar
+eventos (también llamados registros o mensajes en la documentación) en muchas máquinas.
+
+Eventos de ejemplo son transacciones de pago, actualizaciones de geolocalización desde teléfonos móviles, pedidos de
+envío, mediciones de sensores desde dispositivos IoT o equipos médicos, y mucho más. Estos eventos están organizados y
+almacenados en `topics`. De manera muy simplificada, un `topic` es similar a una carpeta en un sistema de archivos y los
+eventos son los archivos en esa carpeta.
+
+Entonces, antes de que puedas escribir tus primeros eventos, debes crear un `topic`. Abra otra sesión de terminal y
+ejecute:
+
+````bash
+C:\kafka_2.13-3.6.0
+$ .\bin\windows\kafka-topics.bat --create --topic quickstart-events --bootstrap-server localhost:9092
+Created topic quickstart-events.
+````
+
+**DONDE**
+
+- `quickstart-events`, nombre que le damos al topic que estamos creando.
+- `localhost:9092`, servidor de arranque que es la dirección de nuestro servidor de Apache Kafka.
+
+Listamos todos los topics que existen dentro del broker de kafka:
+
+````bash
+C:\kafka_2.13-3.6.0
+$ .\bin\windows\kafka-topics.bat --list --bootstrap-server localhost:9092
+quickstart-events
+````
