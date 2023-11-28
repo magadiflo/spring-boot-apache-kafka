@@ -1,5 +1,7 @@
 package dev.magadiflo.kafka.app.controller;
 
+import dev.magadiflo.kafka.app.payload.Student;
+import dev.magadiflo.kafka.app.producer.KafkaJsonProducer;
 import dev.magadiflo.kafka.app.producer.KafkaProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class MessageController {
 
     private final KafkaProducer kafkaProducer;
+    private final KafkaJsonProducer kafkaJsonProducer;
 
     @PostMapping
     public ResponseEntity<String> sendMessage(@RequestBody String message) {
         this.kafkaProducer.sendMessage(message);
         return ResponseEntity.ok("Mensaje puesto en cola correctamente");
+    }
+
+    @PostMapping(path = "/json")
+    public ResponseEntity<String> sendJsonMessage(@RequestBody Student student) {
+        this.kafkaJsonProducer.sendMessage(student);
+        return ResponseEntity.ok("Mensaje puesto en cola correctamente como un JSON");
     }
 }
