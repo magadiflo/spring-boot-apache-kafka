@@ -103,3 +103,92 @@ consumidor dentro de un grupo de consumidores. Como puede ver, esto garantiza qu
 sea procesada solo por un consumer a la vez.
 
 ![11.consumer_groups.png](assets/11.consumer_groups.png)
+
+---
+
+# [Kafka Installation](https://kafka.apache.org/quickstart)
+
+---
+
+Vamos a la siguiente dirección [kafka.apache.org/quickstart](https://kafka.apache.org/quickstart) y seguimos la
+secuencia de la imagen:
+
+![12.kafka_installation.png](assets/12.kafka_installation.png)
+
+Luego de descargar el archivo `kafka_2.13-3.6.0.tgz` **lo descomprimiremos en la raíz del disco** `C:\\`.
+En mi caso quedaría de la siguiente manera `C:\kafka_2.13-3.6.0`.
+
+## Configurando Kafka para windows
+
+Realizamos la siguiente configuración **de manera manual** para que **Kafka funcione en Windows**, ya que por defecto
+está configurado para que funcione con servidores Linux/Mac.
+
+Abrimos el archivo `server.properties` ubicado en `C:\kafka_2.13-3.6.0\config` y cambiamos el directorio linux por
+nuestro directorio de windows donde está nuestro servidor de kafka:
+
+````properties
+# A comma separated list of directories under which to store log files
+#log.dirs=/tmp/kafka-logs (por defecto)
+log.dirs=C:/kafka_2.13-3.6.0/kafka-logs
+````
+
+También debemos modificar el archivo `zookeeper.properties` ubicado en `C:\kafka_2.13-3.6.0\config`:
+
+````properties
+# the directory where the snapshot is stored.
+# dataDir=/tmp/zookeeper (por defecto)
+dataDir=C:/kafka_2.13-3.6.0/zookeeper
+````
+
+## Iniciando servidor Zookeeper y Kafka
+
+Nos ubicamos mediante la terminal en nuestro directorio de instalación de kafka `C:/kafka_2.13-3.6.0` y procedemos a
+ejecutar los comandos en el siguiente orden:
+
+1. **Iniciando servidor ZooKeeper**
+
+````bash
+C:\kafka_2.13-3.6.0
+$ .\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
+[2023-11-27 20:03:11,022] INFO Reading configuration from: .\config\zookeeper.properties (org.apache.zookeeper.server.quorum.QuorumPeerConfig)
+[2023-11-27 20:03:11,034] INFO clientPortAddress is 0.0.0.0:2181 (org.apache.zookeeper.server.quorum.QuorumPeerConfig)
+[2023-11-27 20:03:11,034] INFO secureClientPort is not set (org.apache.zookeeper.server.quorum.QuorumPeerConfig)
+...
+[2023-11-27 20:03:11,059] INFO ACL digest algorithm is: SHA1 (org.apache.zookeeper.server.auth.DigestAuthenticationProvider)
+[2023-11-27 20:03:11,059] INFO zookeeper.DigestAuthenticationProvider.enabled = true (org.apache.zookeeper.server.auth.DigestAuthenticationProvider)
+[2023-11-27 20:03:11,062] INFO zookeeper.snapshot.trust.empty : false (org.apache.zookeeper.server.persistence.FileTxnSnapLog)
+[2023-11-27 20:03:11,072] INFO  (org.apache.zookeeper.server.ZooKeeperServer)
+[2023-11-27 20:03:11,072] INFO   ______                  _                                           (org.apache.zookeeper.server.ZooKeeperServer)
+[2023-11-27 20:03:11,073] INFO  |___  /                 | |                                          (org.apache.zookeeper.server.ZooKeeperServer)
+[2023-11-27 20:03:11,073] INFO     / /    ___     ___   | | __   ___    ___   _ __     ___   _ __    (org.apache.zookeeper.server.ZooKeeperServer)
+[2023-11-27 20:03:11,073] INFO    / /    / _ \   / _ \  | |/ /  / _ \  / _ \ | '_ \   / _ \ | '__| (org.apache.zookeeper.server.ZooKeeperServer)
+[2023-11-27 20:03:11,073] INFO   / /__  | (_) | | (_) | |   <  |  __/ |  __/ | |_) | |  __/ | |     (org.apache.zookeeper.server.ZooKeeperServer)
+[2023-11-27 20:03:11,073] INFO  /_____|  \___/   \___/  |_|\_\  \___|  \___| | .__/   \___| |_| (org.apache.zookeeper.server.ZooKeeperServer)
+[2023-11-27 20:03:11,074] INFO                                               | |                      (org.apache.zookeeper.server.ZooKeeperServer)
+[2023-11-27 20:03:11,074] INFO                                               |_|                      (org.apache.zookeeper.server.ZooKeeperServer)
+[2023-11-27 20:03:11,074] INFO  (org.apache.zookeeper.server.ZooKeeperServer)
+[2023-11-27 20:03:11,076] INFO Server environment:zookeeper.version=3.8.2-139d619b58292d7734b4fc83a0f44be4e7b0c986, built on 2023-07-05 19:24 UTC (org.apache.zookeeper.server.ZooKeeperServer)
+[2023-11-27 20:03:11,076] INFO Server environment:host.name=DESKTOP-EGDL8Q6 (org.apache.zookeeper.server.ZooKeeperServer)
+[2023-11-27 20:03:11,076] INFO Server environment:java.version=21.0.1 (org.apache.zookeeper.server.ZooKeeperServer)
+...
+````
+
+2. **Iniciando el servidor de Kafka**
+
+````bash
+C:\kafka_2.13-3.6.0
+$ .\bin\windows\kafka-server-start.bat .\config\server.properties
+[2023-11-27 20:08:52,815] INFO Registered kafka:type=kafka.Log4jController MBean (kafka.utils.Log4jControllerRegistration$)
+[2023-11-27 20:08:53,313] INFO Setting -D jdk.tls.rejectClientInitiatedRenegotiation=true to disable client-initiated TLS renegotiation (org.apache.zookeeper.common.X509Util)
+[2023-11-27 20:08:53,463] INFO starting (kafka.server.KafkaServer)
+[2023-11-27 20:08:53,465] INFO Connecting to zookeeper on localhost:2181 (kafka.server.KafkaServer)
+[2023-11-27 20:08:53,487] INFO [ZooKeeperClient Kafka server] Initializing a new session to localhost:2181. (kafka.zookeeper.ZooKeeperClient)
+[2023-11-27 20:08:53,503] INFO Client environment:zookeeper.version=3.8.2-139d619b58292d7734b4fc83a0f44be4e7b0c986, built on 2023-07-05 19:24 UTC (org.apache.zookeeper.ZooKeeper)
+...
+[2023-11-27 20:08:56,030] INFO [/config/changes-event-process-thread]: Starting (kafka.common.ZkNodeChangeNotificationListener$ChangeEventProcessThread)
+[2023-11-27 20:08:56,047] INFO [SocketServer listenerType=ZK_BROKER, nodeId=0] Enabling request processing. (kafka.network.SocketServer)
+[2023-11-27 20:08:56,053] INFO Awaiting socket connections on 0.0.0.0:9092. (kafka.network.DataPlaneAcceptor)
+[2023-11-27 20:08:56,066] INFO Kafka version: 3.6.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2023-11-27 20:08:56,068] INFO Kafka commitId: 60e845626d8a465a (org.apache.kafka.common.utils.AppInfoParser)
+...
+````
