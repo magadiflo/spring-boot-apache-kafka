@@ -224,3 +224,11 @@ C:\kafka_2.13-3.6.0
 $ .\bin\windows\kafka-topics.bat --list --bootstrap-server localhost:9092
 quickstart-events
 ````
+
+---
+
+# Real World Application
+
+---
+
+![13.real_world_application.png](assets/13.real_world_application.png)
