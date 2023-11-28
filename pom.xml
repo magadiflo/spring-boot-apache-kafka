@@ -12,6 +12,8 @@
 
     <modules>
         <module>kafka-demo</module>
+        <module>producer</module>
+        <module>consumer</module>
     </modules>
 
 </project>
