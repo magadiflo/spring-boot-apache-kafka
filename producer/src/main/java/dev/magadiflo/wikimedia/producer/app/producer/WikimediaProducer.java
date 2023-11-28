@@ -13,7 +13,7 @@ public class WikimediaProducer {
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     public void sendMessage(String message) {
-        log.info("Enviando mensaje al topic wikimedia-stream: {}", message);
+//        log.info("Enviando mensaje al topic wikimedia-stream: {}", message);
         this.kafkaTemplate.send("wikimedia-stream", message);
     }
 }
