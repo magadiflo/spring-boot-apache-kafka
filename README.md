@@ -65,3 +65,11 @@ puede ser una aplicación java, php, .net o cualquier otro tipo de aplicación, 
 simplemente escribe o envía un evento a un clúster de Kafka.
 
 ![05.kafka_producer.png](assets/05.kafka_producer.png)
+
+## Kafka Consumer
+
+El `consumer` es la aplicación o el sistema que consume o se suscribe al `topic` o al clúster de kafka para consumir los
+eventos. Los consumidores pueden ser parte de un grupo de consumidores que les permite paralelizar el procesamiento de
+mensajes.
+
+![06.kafka_consumer.png](assets/06.kafka_consumer.png)
