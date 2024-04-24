@@ -20,3 +20,11 @@ necesidad de estar al tanto de la existencia de cada uno.
 Como Message Broker tenemos a: `Apache Kafka, Amazon SQS o RabbitMQ`.
 
 ![01.message_broker.png](assets/01.message_broker.png)
+
+## Apache Kafka Global Overview
+
+`Apache Kafka` es una plataforma de procesamiento de flujo e intermediario de mensajes distribuido, tolerante a fallas y
+altamente escalable. `Apache Kafka` está diseñado para manejar grandes volúmenes de flujos de datos en tiempo real y de
+manera tolerante a fallas.
+
+![02.kafka_overview.png](assets/02.kafka_overview.png)
