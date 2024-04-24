@@ -43,3 +43,17 @@ de los datos, lo que garantiza la estabilidad, es decir, la durabilidad y dispon
 equilibra la carga entre varios servidores para ofrecer escalabilidad.
 
 ![03.kafka_cluster.png](assets/03.kafka_cluster.png)
+
+## Kafka Broker
+
+Los brokers de Kafka son servidores con tareas especiales: gestionar el equilibrio de carga, la replicación y el
+desacoplamiento de flujos dentro del clúster de Kafka. Cómo hacen su trabajo? Bueno, en primer lugar, para iniciar un
+clúster kafka, el desarrollador se autentica en un servidor boostrap (o unos cuantos). Estos son los primeros servidores
+del clúster. Luego, los brokers también equilibran la carga y se encargan de la replicación, y esas dos características
+son clave para la velocidad, escalabilidad y estabilidad de kafka.
+
+Por lo que, un `Kafka Broker es un servidor Kafka individual` que almacena datos y atiende las solicitudes de los
+clientes. Los `Brokers` dentro de un cluster se comunican entre sí para garantizar la replicación de datos y mantener
+los metadatos del clúster y a cada broker en un clúster de kafka se le asigna un identificador único.
+
+![04.kafka_broker.png](assets/04.kafka_broker.png)
