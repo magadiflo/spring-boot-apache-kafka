@@ -28,3 +28,18 @@ altamente escalable. `Apache Kafka` está diseñado para manejar grandes volúme
 manera tolerante a fallas.
 
 ![02.kafka_overview.png](assets/02.kafka_overview.png)
+
+## Kafka Cluster
+
+Kafka es diseñado para operar como un sistema distribuido y un cluster le permite escalar horizontalmente, proporciona
+tolerancia y maneja grandes volúmenes de datos a través de múltiples nodos.
+
+En el contexto de `Kafka`, un cluster es un grupo de `brokers/servidores` que trabajan juntos por tres
+razones: `velocidad (baja latencia)`, `durabilidad` y `escalabilidad`.
+
+Varios flujos de datos pueden ser procesados por servidores separados, lo que disminuye la latencia de la entrega de
+datos. Los datos se replican en varios servidores, de modo que si uno falla, otro servidor tiene la copia de seguridad
+de los datos, lo que garantiza la estabilidad, es decir, la durabilidad y disponibilidad de los datos. Kafka también
+equilibra la carga entre varios servidores para ofrecer escalabilidad.
+
+![03.kafka_cluster.png](assets/03.kafka_cluster.png)
