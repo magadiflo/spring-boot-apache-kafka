@@ -357,6 +357,7 @@ para recibirlo con el consumer:
 
 ````java
 
+@ToString
 @Getter
 @Setter
 public class Student {
@@ -475,4 +476,84 @@ Enviando mi tercer mensaje a Apache Kafka
 {"id":1,"firstname":"Martin","lastname":"Torres"}
 {"id":1,"firstname":"Milagros","lastname":"Diaz"}
 {"id":1,"firstname":"Lesly","lastname":"Aguila"}
+````
+
+## Crea Kafka JSON Consumer
+
+Anteriormente, ya habíamos creado nuestra clase `KafkaConsumer`. En este apartado, crearemos un nuevo método con la
+anotación `@KafkaListener` para estar pendiente del topic `kafka-demo` esperando recibir objeto del tipo `Student`.
+Recordar también que habíamos comentado el método que recibía mensajes del tipo String, esto es importante,
+dado que ahora recibiremos objetos JSON.
+
+````java
+
+@Slf4j
+@Service
+public class KafkaConsumer {
+
+    //@KafkaListener(topics = "kafka-demo", groupId = "myGroup")
+    public void consumeMessage(String message) {
+        log.info("Mensaje recibido desde el topic kafka-demo: {}", message);
+    }
+
+    @KafkaListener(topics = "kafka-demo", groupId = "myGroup")
+    public void consumeJsonMessage(Student student) {
+        log.info("Consumiendo Student desde el topic kafka-demo: {}", student.toString());
+    }
+}
+````
+
+## Probando Kafka JSON Consumer
+
+Antes de probar nuestra clase, debemos realizar una configuración en el `application.yml`. Debemos agregar la 
+siguiente configuración: `spring.kafka.consumer.properties.spring.json.trusted.packages='*'`.
+
+````yml
+spring:
+  # Other properties
+  kafka:
+    consumer:
+      # other properties
+      properties:
+        spring.json.trusted.packages: '*'
+    # Other properties
+````
+
+Apache Kafka tiene un mecanismo de seguridad que debemos configurar para decir que confíe en el paquete
+`dev.magadiflo.kafka.app.payload` donde está nuestra clase `Student` que será convertida a un objeto JSON y que esa
+clase sí es seguro para poder serializarlo. Si tenemos múltiples paquetes donde hay clases que se van a serializar
+para enviarse por Kafka, entonces podemos usar `*` que indica que confíe en todos.
+
+Para ser precisos, el error que nos podría mostrar si no agregamos dicha configuración es:
+
+````bash
+Caused by: java.lang.IllegalArgumentException: 
+The class 'dev.magadiflo.kafka.app.payload.Student' is not in the trusted packages: [java.util, java.lang]. 
+If you believe this class is safe to deserialize, please provide its name. 
+If the serialization is only done by a trusted source, you can also enable trust all (*).
+````
+
+Ahora sí, ejecutamos la aplicación y vemos el resultado en consola:
+
+````bash
+$ curl -v -X POST -H "Content-Type: application/json" -d "{\"id\": 1, \"firstname\": \"Susana\", \"lastname\": \"Alvarado\"}" http://localhost:8080/api/v1/messages/json
+>
+< HTTP/1.1 200
+< Content-Type: text/plain;charset=UTF-8
+< Content-Length: 49
+< Date: Thu, 25 Apr 2024 18:09:31 GMT
+<
+Estudiante (JSON) agregado al topic exitosamente!
+````
+
+Consola del Ide IntelliJ IDEA:
+
+````bash
+INFO 11436 --- [kafka-demo] [nio-8080-exec-1] o.a.k.clients.producer.KafkaProducer     : [Producer clientId=producer-1] Instantiated an idempotent producer.
+INFO 11436 --- [kafka-demo] [nio-8080-exec-1] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 3.6.2
+INFO 11436 --- [kafka-demo] [nio-8080-exec-1] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: c4deed513057c94e
+INFO 11436 --- [kafka-demo] [nio-8080-exec-1] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1714068571390
+INFO 11436 --- [kafka-demo] [ad | producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=producer-1] Cluster ID: -lvYjMq4SSePgOrgi4naQQ
+INFO 11436 --- [kafka-demo] [ad | producer-1] o.a.k.c.p.internals.TransactionManager   : [Producer clientId=producer-1] ProducerId set to 1004 with epoch 0
+INFO 11436 --- [kafka-demo] [ntainer#0-0-C-1] d.m.kafka.app.consumer.KafkaConsumer     : Consumiendo Student desde el topic kafka-demo: Student(id=1, firstname=Susana, lastname=Alvarado)
 ````
