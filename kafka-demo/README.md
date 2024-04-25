@@ -144,3 +144,78 @@ public class MessageController {
     }
 }
 ````
+
+## Enviando primer mensaje
+
+En esta sección ejecutamos nuestra aplicación:
+
+````bash
+Connected to the target VM, address: '127.0.0.1:64627', transport: 'socket'
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.5)
+
+2024-04-25T10:52:46.297-05:00  INFO 1872 --- [kafka-demo] [           main] d.m.kafka.app.KafkaDemoApplication       : Starting KafkaDemoApplication using Java 21.0.1 with PID 1872 (M:\PROGRAMACION\DESARROLLO_JAVA_SPRING\02.youtube\18.bouali_ali\03.sprint_boot_3_apache_kafka\spring-boot-apache-kafka\kafka-demo\target\classes started by USUARIO in M:\PROGRAMACION\DESARROLLO_JAVA_SPRING\02.youtube\18.bouali_ali\03.sprint_boot_3_apache_kafka\spring-boot-apache-kafka)
+...
+2024-04-25T10:52:50.416-05:00  INFO 1872 --- [kafka-demo] [           main] o.a.k.clients.admin.AdminClientConfig    : AdminClientConfig values: 
+	auto.include.jmx.reporter = true
+	bootstrap.servers = [localhost:9092]
+...
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+
+2024-04-25T10:52:50.868-05:00  INFO 1872 --- [kafka-demo] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 3.6.2
+2024-04-25T10:52:50.870-05:00  INFO 1872 --- [kafka-demo] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: c4deed513057c94e
+2024-04-25T10:52:50.870-05:00  INFO 1872 --- [kafka-demo] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1714060370864
+2024-04-25T10:52:52.015-05:00  INFO 1872 --- [kafka-demo] [| adminclient-1] o.a.kafka.common.utils.AppInfoParser     : App info kafka.admin.client for adminclient-1 unregistered
+2024-04-25T10:52:52.024-05:00  INFO 1872 --- [kafka-demo] [| adminclient-1] o.apache.kafka.common.metrics.Metrics    : Metrics scheduler closed
+2024-04-25T10:52:52.025-05:00  INFO 1872 --- [kafka-demo] [| adminclient-1] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2024-04-25T10:52:52.025-05:00  INFO 1872 --- [kafka-demo] [| adminclient-1] o.apache.kafka.common.metrics.Metrics    : Metrics reporters closed
+2024-04-25T10:52:52.063-05:00  INFO 1872 --- [kafka-demo] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
+2024-04-25T10:52:52.080-05:00  INFO 1872 --- [kafka-demo] [           main] d.m.kafka.app.KafkaDemoApplication       : Started KafkaDemoApplication in 6.952 seconds (process running for 9.376)
+````
+
+Si abrimos una línea de comando y nos posicionamos en el directorio de instalación de kafka ejecutando el siguiente
+comando, veremos que aparece el topic `kafka-demo` que configuramos en la aplicación:
+
+````bash
+C:\kafka_2.13-3.7.0
+
+$ .\bin\windows\kafka-topics.bat --list --bootstrap-server localhost:9092
+__consumer_offsets
+kafka-demo
+quickstart-events
+````
+
+Ahora, probaremos en enviar mensajes a nuestro topic `kafka-demo` utilizando nuestra api rest. Como aún no hemos
+creado el cliente java que consumirá los mensajes utilizaremos el cliente de consola que viene en apache kafka, tan
+solo lo haremos para observar que nuestro mensaje fue enviado correctamente y está siendo leído sin problemas.
+
+Enviando mensaje desde nuestro api rest:
+
+````bash
+$  curl -v -X POST -H "Content-Type: text/plain" -d "Enviando mi segundo mensaje a Apache Kafka" http://localhost:8080/api/v1/messages
+>
+< HTTP/1.1 200
+< Content-Type: text/plain;charset=UTF-8
+< Content-Length: 39
+< Date: Thu, 25 Apr 2024 16:10:59 GMT
+<
+Mensaje agregado al topic exitosamente!* Connection
+````
+
+Nuestro cliente consumer de consola está suscriba al topic `kafka-demo` desde donde está escuchando todos los mensajes
+que se envíen a él:
+
+````bash
+C:\kafka_2.13-3.7.0
+
+$ .\bin\windows\kafka-console-consumer.bat --topic kafka-demo --from-beginning --bootstrap-server localhost:9092
+Enviando mi primer mensaje a Apache Kafka
+Enviando mi segundo mensaje a Apache Kafka
+````
