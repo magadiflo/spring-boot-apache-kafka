@@ -188,3 +188,26 @@ public class WikimediaController {
 
 }
 ````
+
+## Probando Wikimedia Producer
+
+Primero ejecutamos nuestra aplicación `real-world-producer`, luego levantaremos un cliente consumer de kafka para ver
+los mensajes que van llegando al topic `wikimedia-stream`. Ahora, realizamos una petición al endpoint del controlador:
+
+````bash
+$ curl -v http://localhost:8080/api/v1/wikimedia | jq
+>
+< HTTP/1.1 200 OK
+````
+
+Vemos que el consumer de la consola va recibiendo los mensajes, tal como lo esperábamos.
+
+**NOTA** Los mensajes recibidos son flujos constantes, no acaban, así que aquí solo pongo una parte.
+
+````bash
+C:\kafka_2.13-3.7.0
+
+$ .\bin\windows\kafka-console-consumer.bat --topic wikimedia-stream --from-beginning --bootstrap-server localhost:9092
+{"$schema":"/mediawiki/recentchange/1.0.0","meta":{"uri":"https://be.wikipedia.org/wiki/1948","request_id":"7e936910-96ee-418d-9858-541a8687c775","id":"b36a0621-4e62-44de-8f96-57b5dbfdfec0","dt":"2024-04-25T23:26:57Z","domain":"be.wikipedia.org","stream":"mediawiki.recentchange","topic":"eqiad.mediawiki.recentchange","partition":0,"offset":5050392750},"id":58757985,"type":"edit","namespace":0,"title":"1948","title_url":"https://be.wikipedia.org/wiki/1948","comment":"/* ðƒð░ð┤ðÀðÁÐû */","timestamp":1714087617,"user":"JerzyKundrat","bot":false,"notify_url":"https://be.wikipedia.org/w/index.php?diff=4719016&oldid=4707608","minor":false,"length":{"old":6274,"new":6615},"revision":{"old":4707608,"new":4719016},"server_url":"https://be.wikipedia.org","server_name":"be.wikipedia.org","server_script_path":"/w","wiki":"bewiki","parsedcomment":"<span dir=\"auto\"><span class=\"autocomment\"><a href=\"/wiki/1948#ðƒð░ð┤ðÀðÁÐû\" title=\"1948\">ÔåÆÔÇÄðƒð░ð┤ðÀðÁÐû</a></span></span>"}
+````
+
