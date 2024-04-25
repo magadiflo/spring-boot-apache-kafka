@@ -308,3 +308,54 @@ INFO 13668 --- [kafka-demo] [ad | producer-1] org.apache.kafka.clients.Metadata 
 INFO 13668 --- [kafka-demo] [ad | producer-1] o.a.k.c.p.internals.TransactionManager   : [Producer clientId=producer-1] ProducerId set to 1001 with epoch 0
 INFO 13668 --- [kafka-demo] [ntainer#0-0-C-1] d.m.kafka.app.consumer.KafkaConsumer     : Mensaje recibido desde el topic kafka-demo: Enviando mi tercer mensaje a Apache Kafka
 ````
+
+## Configurando Kafka para objetos JSON: Serialización y Deserialización
+
+En las secciones anteriores hemos estamos enviando y recibiendo "Strings" a nuestro Topic de kafka, pero ahora, nos
+surge la necesidad de enviar objetos. **¿Cómo lo podríamos hacer?**
+
+Bueno, primero hay que tener en cuenta que Apache Kafka almacena y transporta datos en formato de bit, por lo que hay
+una gran cantidad de archivos integrados serializadores y deserializadores, pero ninguno incluye para JSON. **La razón
+por la que `Apache Kafka` no proporciona un serializador JSON es para evitar imponer un formado de serialización
+específico a los usuarios**, por lo que kafka está diseñado para ser independiente de los datos utilizados por
+productores y consumidores, lo que permite la flexibilidad al acomodar varias estructuras de datos y formatos de
+serialización.
+
+Por otro lado, `Spring for Apache Kafka` creó el serializador: `JsonSerializer` y el `JsonDeserializer` que podemos
+usar para **convertir objetos java hacia json y viceversa.**.
+
+En ese sentido, modificaremos el archivo `application.yml` definiendo el nuevo `value-deserializer` y `value-serialize`
+para el `consumer` y `producer` respectivamente:
+
+````yml
+spring:
+  application:
+    name: kafka-demo
+
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: myGroup
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+````
+
+Ahora, crearemos la clase `Student` que será como nuestro payload a enviar con el producer y al mismo tiempo lo usaremos
+para recibirlo con el consumer:
+
+````java
+
+@Getter
+@Setter
+public class Student {
+    private int id;
+    private String firstname;
+    private String lastname;
+}
+````
