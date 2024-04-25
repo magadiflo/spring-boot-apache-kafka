@@ -120,3 +120,179 @@ Un grupo de consumidores contiene uno o más consumidores que trabajan juntos pa
 
 ![10.consumer_groups.png](assets/10.consumer_groups.png)
 
+---
+
+# [Installing and exploring Kafka](https://kafka.apache.org/quickstart)
+
+---
+
+Vamos a la siguiente dirección [kafka.apache.org/quickstart](https://kafka.apache.org/quickstart) y seguimos la
+secuencia de la imagen:
+
+![kafka installation](./assets/11.kafka-installation.png)
+
+Luego de descargar el archivo `kafka_2.13-3.7.0.tgz` **lo descomprimiremos en la raíz del disco** `C:\\`.
+En mi caso quedaría de la siguiente manera `C:\kafka_2.13-3.7.0`.
+
+Por defecto, estos serán los directorios y archivos que vienen en el paquete de instalación:
+
+![12.default-directories.png](./assets/12.default-directories.png)
+
+## Configurando Kafka para windows
+
+Realizamos la siguiente configuración **de manera manual** para que **Kafka funcione en Windows**, ya que por defecto
+está configurado para que funcione con servidores **Linux/Mac**.
+
+Abrimos el archivo `server.properties` ubicado en `C:\kafka_2.13-3.7.0\config` y cambiamos el directorio linux por
+nuestro directorio de windows donde está nuestro servidor de kafka:
+
+````properties
+############################# Log Basics #############################
+# A comma separated list of directories under which to store log files
+#log.dirs=/tmp/kafka-logs (por defecto)
+log.dirs=C:/kafka_2.13-3.7.0/kafka-logs
+````
+
+También debemos modificar el archivo `zookeeper.properties` ubicado en `C:\kafka_2.13-3.6.0\config`:
+
+````properties
+# the directory where the snapshot is stored.
+#dataDir=/tmp/zookeeper (por defecto)
+dataDir=C:/kafka_2.13-3.7.0/zookeeper
+````
+
+## Iniciando servidor Zookeeper y Kafka
+
+Nos ubicamos mediante la terminal en nuestro directorio de instalación de kafka `C:/kafka_2.13-3.7.0` y procedemos a
+ejecutar los comandos en el siguiente orden:
+
+1. **Iniciando servidor ZooKeeper**
+
+````bash
+C:\kafka_2.13-3.7.0
+$ .\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
+
+[2024-04-24 22:30:55,023] INFO Reading configuration from: .\config\zookeeper.properties (org.apache.zookeeper.server.quorum.QuorumPeerConfig)
+[2024-04-24 22:30:55,032] INFO clientPortAddress is 0.0.0.0:2181 (org.apache.zookeeper.server.quorum.QuorumPeerConfig)
+...
+[2024-04-24 22:30:55,110] INFO  (org.apache.zookeeper.server.ZooKeeperServer)
+[2024-04-24 22:30:55,110] INFO   ______                  _                                           (org.apache.zookeeper.server.ZooKeeperServer)
+[2024-04-24 22:30:55,111] INFO  |___  /                 | |                                          (org.apache.zookeeper.server.ZooKeeperServer)
+[2024-04-24 22:30:55,111] INFO     / /    ___     ___   | | __   ___    ___   _ __     ___   _ __    (org.apache.zookeeper.server.ZooKeeperServer)
+[2024-04-24 22:30:55,113] INFO    / /    / _ \   / _ \  | |/ /  / _ \  / _ \ | '_ \   / _ \ | '__| (org.apache.zookeeper.server.ZooKeeperServer)
+[2024-04-24 22:30:55,113] INFO   / /__  | (_) | | (_) | |   <  |  __/ |  __/ | |_) | |  __/ | |     (org.apache.zookeeper.server.ZooKeeperServer)
+[2024-04-24 22:30:55,114] INFO  /_____|  \___/   \___/  |_|\_\  \___|  \___| | .__/   \___| |_| (org.apache.zookeeper.server.ZooKeeperServer)
+[2024-04-24 22:30:55,115] INFO                                               | |                      (org.apache.zookeeper.server.ZooKeeperServer)
+[2024-04-24 22:30:55,115] INFO                                               |_|                      (org.apache.zookeeper.server.ZooKeeperServer)
+[2024-04-24 22:30:55,115] INFO  (org.apache.zookeeper.server.ZooKeeperServer)
+[2024-04-24 22:30:55,124] INFO Server environment:zookeeper.version=3.8.3-6ad6d364c7c0bcf0de452d54ebefa3058098ab56, built on 2023-10-05 10:34 UTC (org.apache.zookeeper.server.ZooKeeperServer)
+...
+[2024-04-24 22:30:55,171] INFO Created server with tickTime 3000 ms minSessionTimeout 6000 ms maxSessionTimeout 60000 ms clientPortListenBacklog -1 datadir C:\kafka_2.13-3.7.0\zookeeper\version-2 snapdir C:\kafka_2.13-3.7.0\zookeeper\version-2 (org.apache.zookeeper.server.ZooKeeperServer)
+[2024-04-24 22:30:55,187] INFO Using org.apache.zookeeper.server.NIOServerCnxnFactory as server connection factory (org.apache.zookeeper.server.ServerCnxnFactory)
+...
+[2024-04-24 22:30:55,289] INFO binding to port 0.0.0.0/0.0.0.0:2181 (org.apache.zookeeper.server.NIOServerCnxnFactory)
+...
+[2024-04-24 22:30:55,382] INFO PrepRequestProcessor (sid:0) started, reconfigEnabled=false (org.apache.zookeeper.server.PrepRequestProcessor)
+[2024-04-24 22:30:55,382] INFO zookeeper.request_throttler.shutdownTimeout = 10000 ms (org.apache.zookeeper.server.RequestThrottler)
+[2024-04-24 22:30:55,418] INFO Using checkIntervalMs=60000 maxPerMinute=10000 maxNeverUsedIntervalMs=0 (org.apache.zookeeper.server.ContainerManager)
+[2024-04-24 22:30:55,419] INFO ZooKeeper audit is disabled. (org.apache.zookeeper.audit.ZKAuditProvider)
+````
+
+2. **Iniciando el servidor de Kafka**
+
+````bash
+C:\kafka_2.13-3.7.0
+$ .\bin\windows\kafka-server-start.bat .\config\server.properties
+
+...
+[2024-04-24 22:34:07,870] INFO Connecting to zookeeper on localhost:2181 (kafka.server.KafkaServer)
+[2024-04-24 22:34:07,897] INFO [ZooKeeperClient Kafka server] Initializing a new session to localhost:2181. (kafka.zookeeper.ZooKeeperClient)
+...
+[2024-04-24 22:34:10,859] INFO Kafka version: 3.7.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-04-24 22:34:10,859] INFO Kafka commitId: 2ae524ed625438c5 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-04-24 22:34:10,860] INFO Kafka startTimeMs: 1714016050851 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-04-24 22:34:10,863] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
+[2024-04-24 22:34:11,482] INFO [zk-broker-0-to-controller-forwarding-channel-manager]: Recorded new controller, from now on will use node DESKTOP-EGDL8Q6:9092 (id: 0 rack: null) (kafka.server.NodeToControllerRequestThread)
+[2024-04-24 22:34:11,482] INFO [zk-broker-0-to-controller-alter-partition-channel-manager]: Recorded new controller, from now on will use node DESKTOP-EGDL8Q6:9092 (id: 0 rack: null) (kafka.server.NodeToControllerRequestThread)
+````
+
+Después de iniciar los servidores y crear nuestro primer `tópic` (la creación del topic se ve a continuación) vemos que
+se han agregado nuevos directorios al directorio de instalación de kafka:
+
+![after-run-kafka](./assets/13.after-run-kafka-directories.png)
+
+## Explorando Kafka
+
+Kafka es una plataforma distribuida de transmisión de eventos que le permite leer, escribir, almacenar y procesar
+eventos (también llamados registros o mensajes en la documentación) en muchas máquinas.
+
+Eventos de ejemplo son transacciones de pago, actualizaciones de geolocalización desde teléfonos móviles, pedidos de
+envío, mediciones de sensores desde dispositivos IoT o equipos médicos, y mucho más. Estos eventos están organizados y
+almacenados en `topics`. De manera muy simplificada, un `topic` es similar a una carpeta en un sistema de archivos y los
+eventos son los archivos en esa carpeta.
+
+### Creando un Topic
+
+Entonces, antes de que puedas escribir tus primeros eventos, debes crear un `topic`. Abra otra sesión de terminal y
+ejecute:
+
+````bash
+C:\kafka_2.13-3.7.0
+$ .\bin\windows\kafka-topics.bat --create --topic quickstart-events --bootstrap-server localhost:9092
+Created topic quickstart-events.
+````
+
+**DONDE**
+
+- `quickstart-events`, nombre que le damos al topic que estamos creando.
+- `localhost:9092`, servidor de arranque que es la dirección de nuestro servidor de Apache Kafka (broker).
+
+### Describe un topic
+
+Podemos ver los detalles del topic `quickstart-events` creado anteriormente:
+
+````bash
+C:\kafka_2.13-3.7.0
+$ .\bin\windows\kafka-topics.bat --describe --topic quickstart-events --bootstrap-server localhost:9092
+Topic: quickstart-events        TopicId: TjsU60PyTRaeiR95VXknFQ PartitionCount: 1       ReplicationFactor: 1    Configs:
+        Topic: quickstart-events        Partition: 0    Leader: 0       Replicas: 0     Isr: 0
+````
+
+### Listando topics
+
+Listamos todos los topics que existen dentro del broker de kafka:
+
+````bash
+C:\kafka_2.13-3.7.0
+$ .\bin\windows\kafka-topics.bat --list --bootstrap-server localhost:9092
+quickstart-events
+````
+
+### Levantando un producer de kafka
+
+Dentro de las instalaciones de Kafka, existe una aplicación en consola que actúa como un productor. Utilizaremos dicha
+aplicación de consola para poder enviar mensajes a nuestro topic `quickstart-events` tal como se muestra a continuación:
+
+````bash
+C:\kafka_2.13-3.7.0
+$ .\bin\windows\kafka-console-producer.bat --topic quickstart-events --bootstrap-server localhost:9092
+>Hola, es mi primer mensaje!
+>Este seria mi segundo mensaje!
+>
+````
+
+### Levantando un consumer de kafka
+
+Además del productor de consola, también encontramos dentro de las instalaciones de Kafka una aplicación en consola que
+hace de `consumer`. Utilizaremos dicha aplicación para poder subscribirnos al topic `quickstart-events` y poder
+leer los mensajes que se estén enviando a ese topic.
+
+````bash
+C:\kafka_2.13-3.7.0
+$ .\bin\windows\kafka-console-consumer.bat --topic quickstart-events --from-beginning --bootstrap-server localhost:9092
+Hola, es mi primer mensaje!
+Este seria mi segundo mensaje!
+````
+
+La bandera `--from-beginning` indica que esta aplicación leerá los mensajes desde el inicio. Si no colocamos dicha
+bandera, empezará a monitorear los mensajes desde el momento en que se ejecutó la aplicación consumer.
