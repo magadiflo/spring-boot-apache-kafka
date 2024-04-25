@@ -67,6 +67,7 @@ Podemos crear una clase de configuración y agregar el bean que nos permitirá c
 `wikimedia-stream`.
 
 ````java
+
 @Configuration
 public class WikimediaTopicConfig {
     @Bean
@@ -75,5 +76,22 @@ public class WikimediaTopicConfig {
     }
 }
 ````
+
 **IMPORTANTE**
 > **El bean `NewTopic` hace que se cree el topic en el broker; `no es necesario si el topic ya existe`.**
+
+## Configurando WebClient (WebFlux)
+
+Ahora configuraremos un `WebClient` de `WebFlux` para hacer la llamada al endPoint
+reactivo `https://stream.wikimedia.org/v2/stream/recentchange` desde donde obtendremos flujos de datos.
+
+````java
+
+@Configuration
+public class WebClientConfig {
+    @Bean
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
+    }
+}
+````
