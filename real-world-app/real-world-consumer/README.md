@@ -76,3 +76,25 @@ public class WikimediaTopicConfig {
     }
 }
 ````
+
+## Agrega Consumer
+
+Crearemos la clase de servicio que se encargará de estar pendiente del topic `wikimedia-strem`.
+
+````java
+
+@Slf4j
+@Service
+public class WikimediaConsumer {
+
+    @KafkaListener(topics = "wikimedia-stream", groupId = "myGroup")
+    public void consumeMessage(String message) {
+        log.info("Consumiendo mensaje desde el topic wikimedia-stream: {}", message);
+    }
+}
+````
+
+**IMPORTANTE**
+
+El `groupId = "myGroup"`, es el nombre que utilizaremos para unirnos a un grupo de consumidores. Es importante que
+este `groupId` sea el mismo que definimos en el `application.yml` en la sección de `consumer`.
