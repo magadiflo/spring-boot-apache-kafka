@@ -401,3 +401,27 @@ public class KafkaJsonProducer {
 - `kafka-demo`, esto significa que cuando envíes el mensaje, Kafka sabrá que debe ser publicado en el tópico llamado
   `kafka-demo`.
 
+## Modificando el controlador MessageController
+
+Ajustamos un nuevo endpoint en nuestro controlador que nos permitirá recibir un objeto `Student` para luego ser enviado
+a la clase `KafkaJsonProducer`.
+
+````java
+
+@RequiredArgsConstructor
+@RestController
+@RequestMapping(path = "/api/v1/messages")
+public class MessageController {
+
+    /* another code */
+    private final KafkaJsonProducer kafkaJsonProducer;
+
+    /* End-point that send string */
+
+    @PostMapping(path = "/json")
+    public ResponseEntity<String> sendJsonMessage(@RequestBody Student student) {
+        this.kafkaJsonProducer.sendMessage(student);
+        return ResponseEntity.ok("Estudiante (JSON) agregado al topic exitosamente!");
+    }
+}
+````
