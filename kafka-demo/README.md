@@ -123,3 +123,24 @@ public class KafkaProducer {
   del `application.yml`, donde hemos definido los siguientes
   atributos `key-serializer: org.apache.kafka.common.serialization.StringSerializer` y
   el `value-serializer: org.apache.kafka.common.serialization.StringSerializer`
+
+## Creando el API Rest
+
+Para poder enviar mensajes a kafka, crearemos un restController que hará uso de la clase KafkaProducer.
+
+````java
+
+@RequiredArgsConstructor
+@RestController
+@RequestMapping(path = "/api/v1/messages")
+public class MessageController {
+
+    private final KafkaProducer kafkaProducer;
+
+    @PostMapping
+    public ResponseEntity<String> sendMessage(@RequestBody String message) {
+        this.kafkaProducer.sendMessage(message);
+        return ResponseEntity.ok("Mensaje agregado al topic exitosamente!");
+    }
+}
+````
