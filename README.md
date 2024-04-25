@@ -120,3 +120,44 @@ Un grupo de consumidores contiene uno o más consumidores que trabajan juntos pa
 
 ![10.consumer_groups.png](assets/10.consumer_groups.png)
 
+---
+
+# [Installing and exploring Kafka](https://kafka.apache.org/quickstart)
+
+---
+
+Vamos a la siguiente dirección [kafka.apache.org/quickstart](https://kafka.apache.org/quickstart) y seguimos la
+secuencia de la imagen:
+
+![kafka installation](./assets/11.kafka-installation.png)
+
+Luego de descargar el archivo `kafka_2.13-3.7.0.tgz` **lo descomprimiremos en la raíz del disco** `C:\\`.
+En mi caso quedaría de la siguiente manera `C:\kafka_2.13-3.7.0`.
+
+Por defecto, estos serán los directorios y archivos que vienen en el paquete de instalación:
+
+![12.default-directories.png](./assets/12.default-directories.png)
+
+## Configurando Kafka para windows
+
+Realizamos la siguiente configuración **de manera manual** para que **Kafka funcione en Windows**, ya que por defecto
+está configurado para que funcione con servidores **Linux/Mac**.
+
+Abrimos el archivo `server.properties` ubicado en `C:\kafka_2.13-3.7.0\config` y cambiamos el directorio linux por
+nuestro directorio de windows donde está nuestro servidor de kafka:
+
+````properties
+############################# Log Basics #############################
+
+# A comma separated list of directories under which to store log files
+#log.dirs=/tmp/kafka-logs (por defecto)
+log.dirs=C:/kafka_2.13-3.7.0/kafka-logs
+````
+
+También debemos modificar el archivo `zookeeper.properties` ubicado en `C:\kafka_2.13-3.6.0\config`:
+
+````properties
+# the directory where the snapshot is stored.
+#dataDir=/tmp/zookeeper (por defecto)
+dataDir=C:/kafka_2.13-3.7.0/zookeeper
+````
