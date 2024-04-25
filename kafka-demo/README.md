@@ -309,6 +309,12 @@ INFO 13668 --- [kafka-demo] [ad | producer-1] o.a.k.c.p.internals.TransactionMan
 INFO 13668 --- [kafka-demo] [ntainer#0-0-C-1] d.m.kafka.app.consumer.KafkaConsumer     : Mensaje recibido desde el topic kafka-demo: Enviando mi tercer mensaje a Apache Kafka
 ````
 
+---
+
+# Kafka para Objetos JSON
+
+---
+
 ## Configurando Kafka para objetos JSON: Serialización y Deserialización
 
 En las secciones anteriores hemos estamos enviando y recibiendo "Strings" a nuestro Topic de kafka, pero ahora, nos
@@ -359,3 +365,39 @@ public class Student {
     private String lastname;
 }
 ````
+
+## Crea un Kafka Json Producer
+
+Creamos una clase de servicio que será la encargada de enviar nuestros mensajes hacia kafka, pero en esta oportunidad
+los mensajes será objetos java que serán convertidas a JSON:
+
+````java
+
+@RequiredArgsConstructor
+@Service
+public class KafkaJsonProducer {
+
+    private final KafkaTemplate<String, Student> kafkaTemplate;
+
+    public void sendMessage(Student student) {
+        Message<Student> message = MessageBuilder
+                .withPayload(student)
+                .setHeader(KafkaHeaders.TOPIC, "kafka-demo")
+                .build();
+        this.kafkaTemplate.send(message);
+    }
+}
+````
+
+**DONDE**
+
+- `Message`, representación de mensaje genérico con encabezados y cuerpo.
+- `withPayload(student)`, crea un nuevo mensaje con el payload dado.
+- `setHeader()`, establezca el valor para el nombre del encabezado dado. Si el valor proporcionado es nulo, se eliminará
+  el encabezado.
+- `KafkaHeaders.TOPIC`, es una constante que representa el nombre del encabezado que Kafka usa para identificar a qué
+  tópico se debe enviar el mensaje. Al agregar este encabezado al mensaje, estás indicando explícitamente a qué tópico
+  debe ser enviado.
+- `kafka-demo`, esto significa que cuando envíes el mensaje, Kafka sabrá que debe ser publicado en el tópico llamado
+  `kafka-demo`.
+
