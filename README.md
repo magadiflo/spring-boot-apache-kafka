@@ -81,3 +81,17 @@ Un `kafka topic` es un canal lógico o una categoría de alimentación en la que
 mensajes dentro del sistema de mensajería kafka.
 
 ![07.kafka_topic.png](assets/07.kafka_topic.png)
+
+## Kafka Partitions
+
+En Apache Kafka, una partición es una unidad básica de paralelismo y escalabilidad. Es una forma de dividir
+horizontalmente un topic en múltiples unidades gestionadas independientemente. Cada partición es una secuencia de
+registros estrictamente ordenada e inmutable, y desempeña un papel crucial en la distribución, el procesamiento paralelo
+y la tolerancia a fallos de los datos dentro de un clúster de kafka.
+
+Las `partitions` permiten el escalado horizontal y el procesamiento paralelo de datos dentro de un tema. Cada partición
+puede considerarse como un flujo independiente de mensajes para que los productores puedan escribir y los consumidores
+puedan leer desde diferentes particiones simultáneamente, lo que le permite a Kafka manejar un mayor volumen de datos
+al distribuir la carga de trabajo entre múltiples particiones.
+
+![08.kafka_partitions.png](assets/08.kafka_partitions.png)
