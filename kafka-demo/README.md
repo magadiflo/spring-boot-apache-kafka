@@ -39,7 +39,8 @@ Este proyecto `kafka-demo` será al mismo tiempo un `productor` y un `consumidor
 
 ## Configure Kafka producer and consumer
 
-Agregamos las configuraciones correspondientes al `producer` y `consumer` de esta aplicación:
+Como esta aplicación se comportará al mismo tiempo como un `producer` y un `consumer`, entonces necesitamos agregar en
+el `application.yml` las configuraciones para ambas formas:
 
 ````yml
 spring:
@@ -66,7 +67,29 @@ spring:
 - `group-id`, un nombre que se utiliza para unirse a un grupo de consumidores.
 - `auto-offset-reset: earliest`, se refiere a la configuración de Kafka para determinar qué hacer cuando un consumidor
   intenta leer desde un offset (posición) que ya no está disponible o si es la primera vez que el consumidor se conecta
-  a un tema (topic). `Earliest` indica que si el offset no es válido o es un nuevo consumidor, comenzará a leer desde el
-  comienzo del topic, es decir, el primer mensaje disponible. Digamos, que este atributo es similar a la bandera que
+  a un tema `(topic)`. `Earliest` indica que si el offset no es válido o es un nuevo consumidor, comenzará a leer desde
+  el comienzo del topic, es decir, el primer mensaje disponible. Digamos, que este atributo es similar a la bandera que
   usamos cuando ejecutamos el consumer en consola `--from-beginning`.
-- 
+
+**IMPORTANTE**
+> Debemos tener en cuenta en el `producer` el tipo de la clase para serializar tanto la key como el value. Ese mismo
+> tipo de clase usaremos en el consumer, obviamente para `Deserealizar`. En nuestro caso, por ejemplo, estamos usando
+> como un `key-serializer` para el `producer` la clase `StringSerializer`, eso significa que en el `key-deserializer`
+> del `consumer` usaremos el `StringDeserializer`.
+
+## Configure Kafka Topic
+
+Dentro del paquete `/config` creamos nuestra clase de configuración `KafkaTopicConfig` donde definiremos nuestro `@Bean`
+que se encargará de crear un `topic` llamado `kafka-demo`.
+
+**El bean `NewTopic` hace que se cree el topic en el broker; `no es necesario si el topic ya existe`.**
+
+````java
+@Configuration
+public class KafkaTopicConfig {    
+    @Bean
+    public NewTopic createTopic() {
+        return TopicBuilder.name("kafka-demo").build();
+    }
+}
+````
