@@ -425,3 +425,54 @@ public class MessageController {
     }
 }
 ````
+
+## Probando clase Json Producer
+
+Antes de ejecutar la aplicación, vamos a realizar una modificación a la clase `KafkaConsumer`, dado que esta clase
+está esperando recibir mensajes del Topic pero como `String`, mientras que, la prueba que haremos requiere que los
+consumidores esperen recibir un objeto JSON del tipo `Student`, así que procederemos a comentar la anotación
+`//@KafkaListener(topics = "kafka-demo", groupId = "myGroup")`.
+
+**NOTA**
+> Si no comentamos dicha línea, al ejecutar nuestra aplicación y enviar mensajes al endpoint de json obtendremos muchos
+> errores, así que es importante comentarlo.
+
+````java
+
+@Slf4j
+@Service
+public class KafkaConsumer {
+
+    //@KafkaListener(topics = "kafka-demo", groupId = "myGroup")
+    public void consumeMessage(String message) {
+        log.info("Mensaje recibido desde el topic kafka-demo: {}", message);
+    }
+}
+````
+
+Enviamos las peticiones http al endpoint que admite un objeto json:
+
+````bash
+$ curl -v -X POST -H "Content-Type: application/json" -d "{\"id\": 1, \"firstname\": \"Lesly\", \"lastname\": \"Aguila\"}" http://localhost:8080/api/v1/messages/json
+>
+< HTTP/1.1 200
+< Content-Type: text/plain;charset=UTF-8
+< Content-Length: 49
+< Date: Thu, 25 Apr 2024 17:43:41 GMT
+<
+Estudiante (JSON) agregado al topic exitosamente!
+````
+
+En consola, abrimos un cliente consumer de kafka para ver los mensajes que enviaremos.
+
+````bash
+C:\kafka_2.13-3.7.0
+
+$ .\bin\windows\kafka-console-consumer.bat --topic kafka-demo --from-beginning --bootstrap-server localhost:9092
+Enviando mi primer mensaje a Apache Kafka
+Enviando mi segundo mensaje a Apache Kafka
+Enviando mi tercer mensaje a Apache Kafka
+{"id":1,"firstname":"Martin","lastname":"Torres"}
+{"id":1,"firstname":"Milagros","lastname":"Diaz"}
+{"id":1,"firstname":"Lesly","lastname":"Aguila"}
+````
