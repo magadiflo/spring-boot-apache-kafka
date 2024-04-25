@@ -85,11 +85,41 @@ que se encargará de crear un `topic` llamado `kafka-demo`.
 **El bean `NewTopic` hace que se cree el topic en el broker; `no es necesario si el topic ya existe`.**
 
 ````java
+
 @Configuration
-public class KafkaTopicConfig {    
+public class KafkaTopicConfig {
     @Bean
     public NewTopic createTopic() {
         return TopicBuilder.name("kafka-demo").build();
     }
 }
 ````
+
+## Create a Kafka Producer
+
+Crearemos una clase de componente que definirá un método e inyectará la clase `KafkaTemplate` para enviar mensajes
+al topic `kafka-demo`.
+
+````java
+
+@Slf4j
+@RequiredArgsConstructor
+@Component
+public class KafkaProducer {
+
+    private final KafkaTemplate<String, String> kafkaTemplate;
+
+    public void sendMessage(String message) {
+        log.info("Enviando mensaje al topic kafka-demo: {}", message);
+        kafkaTemplate.send("kafka-demo", message);
+    }
+}
+````
+
+**DONDE**
+
+- `KafkaTemplate<String, String>`, el primer String representa el tipo de dato de la clave y el segundo el tipo de dato
+  del valor. En nuestro caso, esa definición es coherente con lo que hemos definido en la sección `producer`
+  del `application.yml`, donde hemos definido los siguientes
+  atributos `key-serializer: org.apache.kafka.common.serialization.StringSerializer` y
+  el `value-serializer: org.apache.kafka.common.serialization.StringSerializer`
