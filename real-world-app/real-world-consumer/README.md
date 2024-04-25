@@ -33,5 +33,28 @@
         <scope>test</scope>
     </dependency>
 </dependencies>
+````
 
+## Configurando application.yml
+
+El archivo de configuración contendrá las configuraciones necesarias para nuestra aplicación del tipo `consumer`.
+Notar que el `value-deserializer` que estamos usando es `org.apache.kafka.common.serialization.StringDeserializer`,
+similar a lo que el `producer` nos envía.
+
+Ahora, dado que esta aplicación `consumer` usará el deserializador `StringDeserializer` no es necesario usar la
+configuración `spring.json.trusted.packages: '*'` que usamos en las primeras aplicaciones, ya que no estamos
+usando el deserializador `JSON`.
+
+````yaml
+spring:
+  application:
+    name: real-world-consumer
+
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: myGroup
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 ````
