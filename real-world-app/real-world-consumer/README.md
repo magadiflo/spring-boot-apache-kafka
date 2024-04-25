@@ -58,3 +58,21 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 ````
+
+## Agrega topic
+
+Creamos una clase de configuración que nos permitirá crear el topic `wikimedia-stream`. Ahora, esto podríamos omitirlo,
+ya que en la aplicación `real-world-producer` ya lo habíamos agregado y además ejecutado, por lo que ese topic ya
+se encuentra creado en kafka. Según la documentación de Spring Boot **el bean `NewTopic` hace que se cree el topic en el
+broker; `no es necesario si el topic ya existe`.**
+
+````java
+
+@Configuration
+public class WikimediaTopicConfig {
+    @Bean
+    public NewTopic createTopic() {
+        return TopicBuilder.name("wikimedia-stream").build();
+    }
+}
+````
