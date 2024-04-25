@@ -113,3 +113,54 @@ public class WikimediaProducer {
     }
 }
 ````
+
+## Creando el Wikimedia Stream Consumer
+
+Crearemos la clase de servicio que llamará a la url `https://stream.wikimedia.org/v2/stream/recentchange` desde donde
+se obtendrá los datos usando WebClient de WebFlux.
+
+````java
+
+@Slf4j
+@Service
+public class WikimediaStreamConsumer {
+
+    private final WebClient webClient;
+    private final WikimediaProducer wikimediaProducer;
+
+    public WikimediaStreamConsumer(WebClient.Builder webClientBuilder, WikimediaProducer wikimediaProducer) {
+        this.webClient = webClientBuilder
+                .baseUrl("https://stream.wikimedia.org/v2")
+                .build();
+        this.wikimediaProducer = wikimediaProducer;
+    }
+
+    public void consumeStreamAndPublish() {
+        this.webClient.get()
+                .uri("/stream/recentchange")
+                .retrieve()
+                .bodyToFlux(String.class)
+                .subscribe(
+                        next -> {
+                            log.info("{}", next);
+                            this.wikimediaProducer.sendMessage(next);
+                        },
+                        error -> log.error("error: {}", error.getMessage()),
+                        () -> log.info("¡Flux completado!")
+                );
+    }
+}
+````
+
+**DONDE**
+
+- `Flux`, es un publisher, por lo tanto, un observable. Emite una secuencia asíncrona de 0 a N elementos (onNext) y
+  termina con una señal (onComplete). También puede terminar con una seña (onError).
+- En el código anterior estamos creando un Flux de Strings.
+- No sucederá nada hasta que nos subscribamos `.subscribe()`.
+- Cuando hacemos el `.subscribe()` empezamos a observar, por lo tanto, se trata de un consumidor, un `Observer` que
+  consume cada elemento que emite el `Observable`. En nuestro caso, la fuente observable es el endpoint reactivo, dado
+  que nos está enviando constantemente datos. Ahora, con el `.subscribe()` no solo puede consumir, sino también puede
+  manejar cualquier tipo de error que pueda ocurrir. Finalmente, si la emisión finaliza, se ejecuta el tercer parámetro
+  que corresponde al evento `onComplete`.
+
