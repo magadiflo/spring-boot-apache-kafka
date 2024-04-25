@@ -95,3 +95,21 @@ public class WebClientConfig {
     }
 }
 ````
+
+## Creando el Wikimedia Kafka Producer
+
+Creamos una clase de servicio que será nuestro productor con el que enviaremos mensajes a kafka:
+
+````java
+
+@RequiredArgsConstructor
+@Service
+public class WikimediaProducer {
+
+    private final KafkaTemplate<String, String> kafkaTemplate;
+
+    public void sendMessage(String message) {
+        this.kafkaTemplate.send("wikimedia-stream", message);
+    }
+}
+````
