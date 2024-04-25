@@ -219,3 +219,92 @@ $ .\bin\windows\kafka-console-consumer.bat --topic kafka-demo --from-beginning -
 Enviando mi primer mensaje a Apache Kafka
 Enviando mi segundo mensaje a Apache Kafka
 ````
+
+## Create a Kafka Consumer
+
+Ahora, crearemos nuestro cliente java que se comportará como un `consumer`. Este consumidor se suscribirá al
+topic `kafka-demo` para que esté pendiente de él a medida que se envíen mensajes a dicho topic.
+
+````java
+
+@Slf4j
+@Service
+public class KafkaConsumer {
+
+    @KafkaListener(topics = "kafka-demo", groupId = "myGroup")
+    public void consumeMessage(String message) {
+        log.info("Mensaje recibido desde el topic kafka-demo: {}", message);
+    }
+}
+````
+
+**DONDE**
+
+- `@KafkaListener`, anotación que marca un método como destino de un listener de mensajes de kafka sobre
+  los `topics` especificados.
+- `topics = "kafka-demo"`, topic al que nos vamos a suscribir y estar pendientes de los mensajes que le lleguen.
+- `groupId = "myGroup"`, nombre que utilizaremos para unirnos a un grupo de consumidores.
+
+## Ejecutando aplicación Producer y Consumer
+
+Si ejecutamos la aplicación de Spring Boot veremos en consola lo siguiente:
+
+````bash
+"C:\Program Files\Java\jdk-21.0.1\bin\java.exe" -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:65406,suspend=y,server=n -javaagent:C:\Users\USUARIO\AppData\Local\JetBrains\IdeaIC2024.1\captureAgent\debugger-agent.jar=file:/C:/Users/USUARIO/AppData/Local/Temp/capture.props -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 -classpath "M:\PROGRAMACION\DESARROLLO_JAVA_SPRING\02.youtube\18.bouali_ali\03.sprint_boot_3_apache_kafka\spring-boot-apache-kafka\kafka-demo\target\classes;C:\Users\USUARIO\.m2\repository\org\springframework\boot\spring-boot-starter-web\3.2.5\spring-boot-starter-web-3.2.5.jar;C:\Users\USUARIO\.m2\repository\org\springframework\boot\spring-boot-starter\3.2.5\spring-boot-starter-3.2.5.jar;C:\Users\USUARIO\.m2\repository\org\springframework\boot\spring-boot\3.2.5\spring-boot-3.2.5.jar;C:\Users\USUARIO\.m2\repository\org\springframework\boot\spring-boot-autoconfigure\3.2.5\spring-boot-autoconfigure-3.2.5.jar;C:\Users\USUARIO\.m2\repository\org\springframework\boot\spring-boot-starter-logging\3.2.5\spring-boot-starter-logging-3.2.5.jar;C:\Users\USUARIO\.m2\repository\org\apache\logging\log4j\log4j-to-slf4j\2.21.1\log4j-to-slf4j-2.21.1.jar;C:\Users\USUARIO\.m2\repository\org\apache\logging\log4j\log4j-api\2.21.1\log4j-api-2.21.1.jar;C:\Users\USUARIO\.m2\repository\org\slf4j\jul-to-slf4j\2.0.13\jul-to-slf4j-2.0.13.jar;C:\Users\USUARIO\.m2\repository\jakarta\annotation\jakarta.annotation-api\2.1.1\jakarta.annotation-api-2.1.1.jar;C:\Users\USUARIO\.m2\repository\org\yaml\snakeyaml\2.2\snakeyaml-2.2.jar;C:\Users\USUARIO\.m2\repository\org\springframework\boot\spring-boot-starter-json\3.2.5\spring-boot-starter-json-3.2.5.jar;C:\Users\USUARIO\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.15.4\jackson-databind-2.15.4.jar;C:\Users\USUARIO\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.15.4\jackson-annotations-2.15.4.jar;C:\Users\USUARIO\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.15.4\jackson-core-2.15.4.jar;C:\Users\USUARIO\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jdk8\2.15.4\jackson-datatype-jdk8-2.15.4.jar;C:\Users\USUARIO\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.15.4\jackson-datatype-jsr310-2.15.4.jar;C:\Users\USUARIO\.m2\repository\com\fasterxml\jackson\module\jackson-module-parameter-names\2.15.4\jackson-module-parameter-names-2.15.4.jar;C:\Users\USUARIO\.m2\repository\org\springframework\boot\spring-boot-starter-tomcat\3.2.5\spring-boot-starter-tomcat-3.2.5.jar;C:\Users\USUARIO\.m2\repository\org\apache\tomcat\embed\tomcat-embed-core\10.1.20\tomcat-embed-core-10.1.20.jar;C:\Users\USUARIO\.m2\repository\org\apache\tomcat\embed\tomcat-embed-el\10.1.20\tomcat-embed-el-10.1.20.jar;C:\Users\USUARIO\.m2\repository\org\apache\tomcat\embed\tomcat-embed-websocket\10.1.20\tomcat-embed-websocket-10.1.20.jar;C:\Users\USUARIO\.m2\repository\org\springframework\spring-web\6.1.6\spring-web-6.1.6.jar;C:\Users\USUARIO\.m2\repository\org\springframework\spring-beans\6.1.6\spring-beans-6.1.6.jar;C:\Users\USUARIO\.m2\repository\org\springframework\spring-webmvc\6.1.6\spring-webmvc-6.1.6.jar;C:\Users\USUARIO\.m2\repository\org\springframework\spring-aop\6.1.6\spring-aop-6.1.6.jar;C:\Users\USUARIO\.m2\repository\org\springframework\spring-expression\6.1.6\spring-expression-6.1.6.jar;C:\Users\USUARIO\.m2\repository\org\springframework\kafka\spring-kafka\3.1.4\spring-kafka-3.1.4.jar;C:\Users\USUARIO\.m2\repository\org\springframework\spring-context\6.1.6\spring-context-6.1.6.jar;C:\Users\USUARIO\.m2\repository\org\springframework\spring-messaging\6.1.6\spring-messaging-6.1.6.jar;C:\Users\USUARIO\.m2\repository\org\springframework\spring-tx\6.1.6\spring-tx-6.1.6.jar;C:\Users\USUARIO\.m2\repository\org\springframework\retry\spring-retry\2.0.5\spring-retry-2.0.5.jar;C:\Users\USUARIO\.m2\repository\org\apache\kafka\kafka-clients\3.6.2\kafka-clients-3.6.2.jar;C:\Users\USUARIO\.m2\repository\com\github\luben\zstd-jni\1.5.5-1\zstd-jni-1.5.5-1.jar;C:\Users\USUARIO\.m2\repository\org\lz4\lz4-java\1.8.0\lz4-java-1.8.0.jar;C:\Users\USUARIO\.m2\repository\org\xerial\snappy\snappy-java\1.1.10.5\snappy-java-1.1.10.5.jar;C:\Users\USUARIO\.m2\repository\org\slf4j\slf4j-api\2.0.13\slf4j-api-2.0.13.jar;C:\Users\USUARIO\.m2\repository\io\micrometer\micrometer-observation\1.12.5\micrometer-observation-1.12.5.jar;C:\Users\USUARIO\.m2\repository\io\micrometer\micrometer-commons\1.12.5\micrometer-commons-1.12.5.jar;C:\Users\USUARIO\.m2\repository\com\google\code\findbugs\jsr305\3.0.2\jsr305-3.0.2.jar;C:\Users\USUARIO\.m2\repository\org\projectlombok\lombok\1.18.32\lombok-1.18.32.jar;C:\Users\USUARIO\.m2\repository\org\springframework\spring-core\6.1.6\spring-core-6.1.6.jar;C:\Users\USUARIO\.m2\repository\org\springframework\spring-jcl\6.1.6\spring-jcl-6.1.6.jar;C:\Users\USUARIO\.m2\repository\ch\qos\logback\logback-core\1.4.14\logback-core-1.4.14.jar;C:\Users\USUARIO\.m2\repository\ch\qos\logback\logback-classic\1.4.14\logback-classic-1.4.14.jar;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2023.3\lib\idea_rt.jar" dev.magadiflo.kafka.app.KafkaDemoApplication
+Connected to the target VM, address: '127.0.0.1:65406', transport: 'socket'
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.5)
+
+INFO 13668 --- [kafka-demo] [           main] d.m.kafka.app.KafkaDemoApplication       : Starting KafkaDemoApplication using Java 21.0.1 with PID 13668 (M:\PROGRAMACION\DESARROLLO_JAVA_SPRING\02.youtube\18.bouali_ali\03.sprint_boot_3_apache_kafka\spring-boot-apache-kafka\kafka-demo\target\classes started by USUARIO in M:\PROGRAMACION\DESARROLLO_JAVA_SPRING\02.youtube\18.bouali_ali\03.sprint_boot_3_apache_kafka\spring-boot-apache-kafka)
+INFO 13668 --- [kafka-demo] [           main] d.m.kafka.app.KafkaDemoApplication       : No active profile set, falling back to 1 default profile: "default"
+...
+INFO 13668 --- [kafka-demo] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-myGroup-1, groupId=myGroup] Discovered group coordinator DESKTOP-EGDL8Q6:9092 (id: 2147483647 rack: null)
+INFO 13668 --- [kafka-demo] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-myGroup-1, groupId=myGroup] (Re-)joining group
+INFO 13668 --- [kafka-demo] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-myGroup-1, groupId=myGroup] Request joining group due to: need to re-join with the given member-id: consumer-myGroup-1-f777573a-5c50-4218-96e2-137ac4ea9035
+INFO 13668 --- [kafka-demo] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-myGroup-1, groupId=myGroup] Request joining group due to: rebalance failed due to 'The group member needs to have a valid member id before actually entering a consumer group.' (MemberIdRequiredException)
+INFO 13668 --- [kafka-demo] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-myGroup-1, groupId=myGroup] (Re-)joining group
+INFO 13668 --- [kafka-demo] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-myGroup-1, groupId=myGroup] Successfully joined group with generation Generation{generationId=1, memberId='consumer-myGroup-1-f777573a-5c50-4218-96e2-137ac4ea9035', protocol='range'}
+INFO 13668 --- [kafka-demo] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-myGroup-1, groupId=myGroup] Finished assignment for group at generation 1: {consumer-myGroup-1-f777573a-5c50-4218-96e2-137ac4ea9035=Assignment(partitions=[kafka-demo-0])}
+INFO 13668 --- [kafka-demo] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-myGroup-1, groupId=myGroup] Successfully synced group in generation Generation{generationId=1, memberId='consumer-myGroup-1-f777573a-5c50-4218-96e2-137ac4ea9035', protocol='range'}
+INFO 13668 --- [kafka-demo] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-myGroup-1, groupId=myGroup] Notifying assignor about the new Assignment(partitions=[kafka-demo-0])
+INFO 13668 --- [kafka-demo] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-myGroup-1, groupId=myGroup] Adding newly assigned partitions: kafka-demo-0
+INFO 13668 --- [kafka-demo] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-myGroup-1, groupId=myGroup] Found no committed offset for partition kafka-demo-0
+INFO 13668 --- [kafka-demo] [ntainer#0-0-C-1] o.a.k.c.c.internals.SubscriptionState    : [Consumer clientId=consumer-myGroup-1, groupId=myGroup] Resetting offset for partition kafka-demo-0 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[DESKTOP-EGDL8Q6:9092 (id: 0 rack: null)], epoch=0}}.
+INFO 13668 --- [kafka-demo] [ntainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : myGroup: partitions assigned: [kafka-demo-0]
+INFO 13668 --- [kafka-demo] [ntainer#0-0-C-1] d.m.kafka.app.consumer.KafkaConsumer     : Mensaje recibido desde el topic kafka-demo: Enviando mi primer mensaje a Apache Kafka
+INFO 13668 --- [kafka-demo] [ntainer#0-0-C-1] d.m.kafka.app.consumer.KafkaConsumer     : Mensaje recibido desde el topic kafka-demo: Enviando mi segundo mensaje a Apache Kafka
+````
+
+Observamos que estamos recibiendo lo dos mensajes enviados anteriormente, esto es gracias que en la configuración
+del `application.yml` definimos la propiedad `auto-offset-reset: earliest`.
+
+Ahora, usando nuestra api rest, enviamos un tercer mensaje:
+
+````bash
+$ curl -v -X POST -H "Content-Type: text/plain" -d "Enviando mi tercer mensaje a Apache Kafka" http://localhost:8080/api/v1/messages
+>
+< HTTP/1.1 200
+< Content-Type: text/plain;charset=UTF-8
+< Content-Length: 39
+< Date: Thu, 25 Apr 2024 16:33:20 GMT
+<
+Mensaje agregado al topic exitosamente!
+````
+
+En consola del IDE veremos que el mensaje se ha recibido exitosamente:
+
+````bash
+INFO 13668 --- [kafka-demo] [nio-8080-exec-2] o.a.k.clients.producer.KafkaProducer     : [Producer clientId=producer-1] Instantiated an idempotent producer.
+INFO 13668 --- [kafka-demo] [nio-8080-exec-2] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 3.6.2
+INFO 13668 --- [kafka-demo] [nio-8080-exec-2] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: c4deed513057c94e
+INFO 13668 --- [kafka-demo] [nio-8080-exec-2] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1714062800220
+INFO 13668 --- [kafka-demo] [ad | producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=producer-1] Cluster ID: -lvYjMq4SSePgOrgi4naQQ
+INFO 13668 --- [kafka-demo] [ad | producer-1] o.a.k.c.p.internals.TransactionManager   : [Producer clientId=producer-1] ProducerId set to 1001 with epoch 0
+INFO 13668 --- [kafka-demo] [ntainer#0-0-C-1] d.m.kafka.app.consumer.KafkaConsumer     : Mensaje recibido desde el topic kafka-demo: Enviando mi tercer mensaje a Apache Kafka
+````
