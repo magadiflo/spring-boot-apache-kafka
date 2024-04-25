@@ -164,3 +164,27 @@ public class WikimediaStreamConsumer {
   manejar cualquier tipo de error que pueda ocurrir. Finalmente, si la emisión finaliza, se ejecuta el tercer parámetro
   que corresponde al evento `onComplete`.
 
+## Creando Wikimedia Controller
+
+Vamos a crear un controlador llamado `WikimediaController` con un endpoint. Básicamente, lo creamos para tener una
+manera de activar el `producer`, es decir, podríamos haber colocado el
+`this.wikimediaStreamConsumer.consumeStreamAndPublish()` al iniciar la aplicación en el bean `CommandLineRunner`, eso
+haría que apenas se inicie la aplicación se empiece a ejecutar nuestro proyecto; pero en nuestro caso, creamos un
+endpoint para activar el proceso cuando hagamos la llamada en el momento en el que queramos.
+
+````java
+
+@RequiredArgsConstructor
+@RestController
+@RequestMapping(path = "/api/v1/wikimedia")
+public class WikimediaController {
+
+    private final WikimediaStreamConsumer wikimediaStreamConsumer;
+
+    @GetMapping
+    public void startPublishing() {
+        this.wikimediaStreamConsumer.consumeStreamAndPublish();
+    }
+
+}
+````
