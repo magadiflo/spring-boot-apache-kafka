@@ -66,10 +66,87 @@ spring:
 - `bootstrap-servers`, uno o más brokers de kafka para conectarse al iniciar.
 - `group-id`, un nombre que se utiliza para unirse a un grupo de consumidores.
 - `auto-offset-reset: earliest`, se refiere a la configuración de Kafka para determinar qué hacer cuando un consumidor
-  intenta leer desde un offset (posición) que ya no está disponible o si es la primera vez que el consumidor se conecta
-  a un tema `(topic)`. `Earliest` indica que si el offset no es válido o es un nuevo consumidor, comenzará a leer desde
-  el comienzo del topic, es decir, el primer mensaje disponible. Digamos, que este atributo es similar a la bandera que
-  usamos cuando ejecutamos el consumer en consola `--from-beginning`.
+  intenta leer desde un offset (posición) que ya no está disponible o **si es la primera vez que el consumidor se
+  conecta a un tema** `(topic)`. `Earliest` indica que si el offset no es válido o es un nuevo consumidor, **comenzará a
+  leer desde el comienzo del topic**, es decir, el primer mensaje disponible. A continuación, veremos más detalles
+  conceptuales de esta configuración junto con otra muy relacionada.
+
+#### [Configuración de la gestión de Offset](https://docs.confluent.io/platform/current/clients/consumer.html#offset-management-configuration)
+
+Hay dos configuraciones principales para la gestión de `offset`; si el `auto-commit` está habilitado y la política
+de reinicio del `offset`.
+
+- `enable.auto.commit`, esta configuración habilita el `auto-commit (que es el valor predeterminado)`, lo que significa
+  que **el consumidor automáticamente confirma los offsets periódicamente** según el intervalo establecido por
+  `auto.commit.interval.ms`. El intervalo predeterminado es de 5 segundos.<br><br>
+  En nuestro caso, podríamos haber configurado en nuestro consumidor de Spring Boot
+  el `spring.kafka.consumer.enable-auto-commit=true`, pero **por defecto ya viene habilitado (true)**. Si está en true,
+  el consumidor automáticamente confirma los offsets en Kafka. Esto significa que **Kafka puede recordar dónde el
+  consumidor dejó de leer.** Si es false, debes gestionar manualmente cuándo se confirma el offset.
+
+
+- `auto.offset.reset`, define el comportamiento del consumidor cuando no hay una posición confirmada **(lo cual ocurre
+  cuando el grupo se inicializa por primera vez)** o cuando un offset está fuera de rango. Puedes elegir entre
+  restablecer la posición al offset `earliest` (más temprano: comienza a leer desde el primer registro disponible en el
+  topic) o al offset `latest` (más reciente: comienza a leer desde el último registro) **(el valor
+  predeterminado)**. También puedes seleccionar `none` (ninguno: levanta un error si el offset no se encuentra) si
+  prefieres establecer el offset inicial por ti mismo y estás dispuesto a manejar manualmente los errores de fuera de
+  rango.
+
+Considero que es importante colocar aquí un ejemplo para ver en ejecución la configuración de la gestión de Offset.
+Únicamente enfoquémonos en el comportamiento, más adelante veremos cómo es que vamos a construir estos ejemplos
+mostrados, aquí únicamente me interesa comprender cómo es que el consumidor está leyendo los registros.
+
+**EL ESCENARIO:** Tenemos una aplicación en consola que será nuestro `producer`, esta aplicación está ejecutándose,
+mienstras que nuestra aplicación en Spring Boot, que será nuestro `consumer` aún no se ha ejecutado. Utilizando el
+`producer` enviamos los primeros 3 mensajes: 1. Probando el inicio.., 2. Un saludo... 3. hola papi. A continuación
+levantamos el `consumer`, quien leerá los tres mensajes enviados por el `producer` (esos tres mensajes leídos no los
+estoy mostrando, pero sí los ha consumido). Ahora, dejamos el `producer` levantado, mientras que el `consumer` lo
+detenemos. Teniendo ambas aplicaciones en esos estados, utilizamos el `producer` para enviar cinco mensajes más.
+
+````bash
+C:\kafka_2.13-3.7.0
+
+$ .\bin\windows\kafka-console-producer.bat --topic wikimedia-stream --bootstrap-server localhost:9092
+>1. Probando el inicio de los mensajes!
+>2. Un saludo para el peru
+>3. hola papi
+>4. mi vida mi mundo eres tu
+>5. mi agua que calma mi sed
+>6. de dia tu, calor seras
+>7. de noche tu, la luz seras
+>8. iluminando mi camino
+>
+````
+
+Ahora, volvemos a levantar la aplicación de spring boot `consumer` y vemos que ahora **únicamente está consumiendo
+los mensajes nuevos, es decir, mensajes posteriores a los mensajes que ya había consumido** y eso es producto de que
+tenemos la configuración por defecto (implícito) `spring.kafka.consumer.enable-auto-commit=true`.
+
+**Esto sugiere que Kafka está recordando los offsets y, al reiniciar el consumidor, este comienza desde el último offset
+confirmado, evitando así la relectura de mensajes previamente consumidos.** Si el auto-commit está habilitado, el
+consumidor confirmará automáticamente los offsets en intervalos regulares, evitando que se reconsuman mensajes al
+reiniciar la aplicación. Esta configuración es común y facilita el manejo de offsets porque Kafka lleva el seguimiento
+por ti.
+
+````bash
+mcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path ''
+mer.ConsumerConfig    : ConsumerConfig values: 
+...
+.ConsumerCoordinator  : [Consumer clientId=consumer-myGroup-1, groupId=myGroup] Adding newly assigned partitions: wikimedia-stream-0
+.ConsumerCoordinator  : [Consumer clientId=consumer-myGroup-1, groupId=myGroup] Setting offset for partition wikimedia-stream-0 to the committed offset FetchPosition{offset=617, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[DESKTOP-EGDL8Q6:9092 (id: 0 rack: null)], epoch=0}}
+eListenerContainer    : myGroup: partitions assigned: [wikimedia-stream-0]
+WikimediaConsumer     : Consumiendo mensaje desde el topic wikimedia-stream: 4. mi vida mi mundo eres tu
+WikimediaConsumer     : Consumiendo mensaje desde el topic wikimedia-stream: 5. mi agua que calma mi sed
+WikimediaConsumer     : Consumiendo mensaje desde el topic wikimedia-stream: 6. de dia tu, calor seras
+WikimediaConsumer     : Consumiendo mensaje desde el topic wikimedia-stream: 7. de noche tu, la luz seras
+WikimediaConsumer     : Consumiendo mensaje desde el topic wikimedia-stream: 8. iluminando mi camino
+````
+
+Finalmente, notemos que cuando reiniciamos el `consumer`, el valor del `auto-offset-reset` no se aplica en
+este caso, ya que **este parámetro se usa solo cuando el offset del consumer no es válido o no está disponible**, por
+ejemplo, `cuando se inicia un consumidor por primera vez` o si los offsets anteriores han expirado o han sido
+eliminados.
 
 **IMPORTANTE**
 > Debemos tener en cuenta en el `producer` el tipo de la clase para serializar tanto la key como el value. Ese mismo
