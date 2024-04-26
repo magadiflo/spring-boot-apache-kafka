@@ -143,10 +143,14 @@ WikimediaConsumer     : Consumiendo mensaje desde el topic wikimedia-stream: 7. 
 WikimediaConsumer     : Consumiendo mensaje desde el topic wikimedia-stream: 8. iluminando mi camino
 ````
 
-Finalmente, notemos que cuando reiniciamos el `consumer`, el valor del `auto-offset-reset` no se aplica en
+Notemos que cuando reiniciamos el `consumer`, el valor del `auto-offset-reset` no se aplica en
 este caso, ya que **este parámetro se usa solo cuando el offset del consumer no es válido o no está disponible**, por
-ejemplo, `cuando se inicia un consumidor por primera vez` o si los offsets anteriores han expirado o han sido
-eliminados.
+ejemplo, `porque es un nuevo grupo` o porque los offsets anteriores han expirado o han sido eliminados.
+
+Finalmente, **¿qué pasa si a nuestro grupo de consumidores le agregamos un nuevo consumidor?**, en ese escenario si
+el grupo de consumidores ya tiene offsets `confirmados (commit)` para las particiones asignadas, el nuevo consumidor
+debería continuar desde esos offsets y **no re-consumir mensajes previamente confirmados.** Si hay un offset confirmado
+para la partición, **Kafka usará ese como el punto de partida para el nuevo consumidor.**
 
 **IMPORTANTE**
 > Debemos tener en cuenta en el `producer` el tipo de la clase para serializar tanto la key como el value. Ese mismo
