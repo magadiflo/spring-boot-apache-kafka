@@ -243,7 +243,8 @@ public class KafkaConsumer {
 - `@KafkaListener`, anotación que marca un método como destino de un listener de mensajes de kafka sobre
   los `topics` especificados.
 - `topics = "kafka-demo"`, topic al que nos vamos a suscribir y estar pendientes de los mensajes que le lleguen.
-- `groupId = "myGroup"`, nombre que utilizaremos para unirnos a un grupo de consumidores.
+- `groupId = "myGroup"`, nombre que utilizaremos para unirnos a un grupo de consumidores. Es importante que
+  este `groupId` sea el mismo que definimos en el `application.yml` en la sección de `consumer`.
 
 ## Ejecutando aplicación Producer y Consumer
 
@@ -505,7 +506,7 @@ public class KafkaConsumer {
 
 ## Probando Kafka JSON Consumer
 
-Antes de probar nuestra clase, debemos realizar una configuración en el `application.yml`. Debemos agregar la 
+Antes de probar nuestra clase, debemos realizar una configuración en el `application.yml`. Debemos agregar la
 siguiente configuración: `spring.kafka.consumer.properties.spring.json.trusted.packages='*'`.
 
 ````yml
